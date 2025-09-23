@@ -1,0 +1,12 @@
+abstract class AuthEvent {}
+
+class LoginRequested extends AuthEvent {
+  final String email;
+  final String password;
+  LoginRequested(this.email, this.password);
+}
+
+class LoginWithPhone extends AuthEvent {
+  final String phone;
+  LoginWithPhone(this.phone);
+}
