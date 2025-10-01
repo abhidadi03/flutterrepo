@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:myfirstapp/features/user/domain/repository/user_repository.dart';
 import 'package:myfirstapp/features/user/presentation/bloc/user_bloc.dart';
 import 'package:myfirstapp/features/user/presentation/bloc/user_event.dart';
 import 'package:myfirstapp/features/user/presentation/bloc/user_state.dart';
-import 'package:myfirstapp/features/user/presentation/pages/view_user_pages.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../main.dart';
 import '../../data/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 

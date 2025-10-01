@@ -7,8 +7,11 @@ import '../bloc/forgotemail_event.dart';
 import '../bloc/forgotemail_state.dart';
 import '../bloc/forgotemail_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../common/widgets/common_phone_field.dart';
+import '../../../phone_validation/presentation/widgets/common_phone_field.dart';
 import '.././../../../../features/user/data/models/reset_password_args.dart';
+import '../../../../user/phone_validation/presentation/bloc/phone_validation_bloc.dart';
+import '../../../phone_validation/presentation/bloc/phone_validation_event.dart';
+import '../../../phone_validation/presentation/bloc/phone_validation_state.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,7 +23,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   bool loginWithPhone = true;
-
+  String? _verificationId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,12 +100,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   },
                 ),
               ] else ...[
-                // CommonPhoneField(onVerified: (phone) {
-                //   print("verified");
-                // }, navigation: (context, phone) {
-                //   context.go('/reset-password',
-                //       extra: ResetPasswordArgs(phone: phone));
-                // }),
+                CommonPhoneField(
+                  onSendOtp: (phone) {
+                    print('into print:$phone');
+                    context.read<OtpBloc>().add(SendOtp(phone: phone));
+                  },
+                  onVerifyOtp: (phone, otp) {
+                    final state = context.read<OtpBloc>().state;
+                    print("stateeeee:$state");
+                    if (state is OtpSentSuccess) {
+                      _verificationId = state.verificationId;
+                    } else if (state is ResendOtpSuccess) {
+                      _verificationId = state.verificationId;
+                    }
+                    print("verificationCode:$_verificationId");
+                    context.read<OtpBloc>().add(
+                        VerifyOtp(verficationId: _verificationId!, otp: otp));
+                  },
+                  onResendOtp: (phone, resendToken) {
+                    final state = context.read<OtpBloc>().state;
+                    context
+                        .read<OtpBloc>()
+                        .add(ResendOtp(phone: phone, resendToken: resendToken));
+                  },
+                  onVerfiedOtp: (phone) {
+                    context.push('/reset-password',
+                        extra: ResetPasswordArgs(phone: phone));
+                  },
+                ),
               ],
               const SizedBox(height: 20),
               Row(

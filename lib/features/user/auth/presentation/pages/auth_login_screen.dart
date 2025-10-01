@@ -6,10 +6,10 @@ import 'package:myfirstapp/features/user/auth/presentation/bloc/auth_event.dart'
 import 'package:myfirstapp/features/user/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../common/widgets/common_button.dart';
-import '../../../../../common/widgets/common_phone_field.dart';
-import '../../../send_otp/presentation/bloc/phone_validation_state.dart';
-import '../../../send_otp/presentation/bloc/phone_validation_bloc.dart';
-import '../../../send_otp/presentation/bloc/phone_validation_event.dart';
+import '../../../phone_validation/presentation/widgets/common_phone_field.dart';
+import '../../../phone_validation/presentation/bloc/phone_validation_state.dart';
+import '../../../phone_validation/presentation/bloc/phone_validation_bloc.dart';
+import '../../../phone_validation/presentation/bloc/phone_validation_event.dart';
 import '../../../verify_otp/presentation/bloc/verify_otp_bloc.dart';
 // import '../../../verify_otp/presentation/bloc/verify_otp_event.dart';
 import '../../../verify_otp/presentation/bloc/verify_otp_state.dart';
@@ -53,7 +53,7 @@ class _NewLoginScreen extends State<NewLoginScreen> {
               if (state is AuthAuthenticated) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Login Sucess")));
-                context.go('/users');
+                context.go('/home');
               } else if (state is AuthFailed) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
@@ -146,14 +146,27 @@ class _NewLoginScreen extends State<NewLoginScreen> {
                         context.read<OtpBloc>().add(SendOtp(phone: phone));
                       },
                       onVerifyOtp: (phone, otp) {
+                        print("into Onverified");
                         final state = context.read<OtpBloc>().state;
                         print("stateeeee:$state");
-                        if (state is OtpSent) {
-                          _verificationId = state.VerficationId;
+                        if (state is OtpSentSuccess) {
+                          _verificationId = state.verificationId;
+                        } else if (state is ResendOtpSuccess) {
+                          _verificationId = state.verificationId;
                         }
                         print("verificationCode:$_verificationId");
-                        context.read<OtpBloc>().add(VerfiyOtp(
+                        context.read<OtpBloc>().add(VerifyOtp(
                             verficationId: _verificationId!, otp: otp));
+                      },
+                      onResendOtp: (phone, resendToken) {
+                        final state = context.read<OtpBloc>().state;
+                        context.read<OtpBloc>().add(
+                            ResendOtp(phone: phone, resendToken: resendToken));
+                      },
+                      onVerfiedOtp: (_) {
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //     const SnackBar(content: Text("Login Success")));
+                        context.push('/home');
                       },
                     ),
                   ],
@@ -180,7 +193,7 @@ class _NewLoginScreen extends State<NewLoginScreen> {
                                     color: Colors.blue,
                                     decoration: TextDecoration.underline),
                               ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -207,7 +220,6 @@ class _NewLoginScreen extends State<NewLoginScreen> {
                         onTap: () {
                           print("register");
                           context.go('/signup');
-                          // context.go('/initial-screen');
                         },
                         child: const Text(
                           "Signup",

@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:myfirstapp/config/routes/app_routes.dart';
 import 'package:myfirstapp/features/user/domain/repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myfirstapp/features/user/send_otp/presentation/bloc/phone_validation_bloc.dart';
+import 'package:myfirstapp/features/user/phone_validation/presentation/bloc/phone_validation_bloc.dart';
 import 'package:myfirstapp/features/user/presentation/bloc/user_bloc.dart';
+import 'package:myfirstapp/features/user/profile/presentation/bloc/profile_bloc.dart';
 import 'package:provider/provider.dart';
 import 'core/resources/service_locator.dart';
 import 'package:myfirstapp/features/user/auth/presentation/pages/login_screen.dart';
@@ -29,6 +30,7 @@ void main() async {
       BlocProvider<AuthBloc>(create: (_) => getIt<AuthBloc>()),
       BlocProvider(create: (_) => getIt<ForgotPasswordBloc>()),
       BlocProvider<OtpBloc>(create: (_) => getIt<OtpBloc>()),
+      BlocProvider<ProfileBloc>(create: (_) => getIt<ProfileBloc>()),
     ],
     child: const MyApp(),
   )));

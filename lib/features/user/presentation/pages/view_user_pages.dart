@@ -32,7 +32,7 @@ class ViewUserPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Users"),
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.purple,
           centerTitle: true,
         ),
         body: BlocBuilder<UserBloc, UserState>(

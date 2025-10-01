@@ -10,4 +10,8 @@ abstract class OtpApi {
 
   @POST('/users/validateUserPhone')
   Future<ValidateUserResponse> validateUser(@Body() Map<String, dynamic> body);
+
+  @POST('/users/updatePhone')
+  Future<String> phoneLink(
+      @Body() Map<String, dynamic> body, @Header('Authorization') String token);
 }

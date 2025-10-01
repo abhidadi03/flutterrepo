@@ -16,6 +16,8 @@ import '../../features/user/auth/presentation/pages/reset_password_screen.dart';
 import '../../features/user/auth/presentation/pages/flutter_auth_ui.dart';
 import '../../features/user/auth/presentation/pages/auth_login_screen.dart';
 import '../../features/user/data/models/reset_password_args.dart';
+import '../../features/user/home_screen/presentation/pages/home_screen.dart';
+import '../../features/user/profile/presentation/pages/profile_screen.dart';
 
 final GoRouter approuter =
     GoRouter(initialLocation: '/initial-screen', routes: [
@@ -77,5 +79,16 @@ final GoRouter approuter =
       path: '/signup',
       builder: (context, state) {
         return AuthSignup();
+      }),
+  GoRoute(
+    path: '/home',
+    builder: (context, state) {
+      return HomeScreen();
+    },
+  ),
+  GoRoute(
+      path: '/profile',
+      builder: (context, state) {
+        return MyProfile();
       })
 ]);

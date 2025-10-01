@@ -198,3 +198,78 @@
 //   }
 // }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// return Column(
+//   children: [
+//     SizedBox(
+//       width: 350,
+//       height: 50,
+//       child: BlocBuilder<OtpBloc, OtpState>(
+//         builder: (context, state) {
+//           final isLoading = state is OtpLoading || state is VerifyOtpLoading;
+//           return ElevatedButton(
+//             onPressed: isLoading
+//                 ? null
+//                 : () {
+//                     print("button pressed");
+//                     if (_otpSent) {
+//                       if (_otpController.text.trim().length != 6) {
+//                         ScaffoldMessenger.of(context).showSnackBar(
+//                           const SnackBar(content: Text("OTP should contain 6 digits")),
+//                         );
+//                         return;
+//                       }
+//                       widget.onVerifyOtp(
+//                         _phoneController.text.trim(),
+//                         _otpController.text.trim(),
+//                       );
+//                     } else {
+//                       if (_phoneController.text.trim().length != 13) {
+//                         ScaffoldMessenger.of(context).showSnackBar(
+//                           const SnackBar(content: Text("Phone should contain 10 digits")),
+//                         );
+//                         return;
+//                       }
+//                       widget.onSendOtp(_phoneController.text.trim());
+//                     }
+//                   },
+//             style: ElevatedButton.styleFrom(
+//               backgroundColor: Colors.purple,
+//               foregroundColor: Colors.white,
+//               shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(30),
+//               ),
+//             ),
+//             child: isLoading
+//                 ? const CircularProgressIndicator(strokeWidth: 2, color: Colors.purple)
+//                 : Text(
+//                     _otpSent ? "Verify OTP" : "Send OTP",
+//                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//                   ),
+//           );
+//         },
+//       ),
+//     ),
+//     const SizedBox(height: 10), //  Now this is part of the Column children
+//   ],
+// );

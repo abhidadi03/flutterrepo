@@ -1,5 +1,5 @@
 import 'package:myfirstapp/features/user/data/models/user_model.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../models/user_model.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,10 +24,15 @@ class AuthRepositoryImpl implements AuthRepository {
       print("user in firebase$user");
       // final idToken = await user.getIdToken();
       if (user != null) {
+        final storage = FlutterSecureStorage();
+        // String? storedToken = await storage.read(key: 'id_token');
         final idToken = await user.getIdToken();
-        print("token:$idToken");
+        await storage.write(key: 'id_token', value: idToken);
+        print("tokennn----nn--:$idToken");
+
         return authApi.getUser("Bearer $idToken");
       }
+
       // return null;
     } catch (e) {
       print('Loginerror:$e');

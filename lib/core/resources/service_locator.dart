@@ -8,11 +8,12 @@ import 'package:myfirstapp/features/user/domain/usecases/create_user.dart';
 import 'package:myfirstapp/features/user/domain/usecases/delete_user.dart';
 import 'package:myfirstapp/features/user/domain/usecases/edit_user.dart';
 import 'package:myfirstapp/features/user/domain/usecases/fetch_users.dart';
-import 'package:myfirstapp/features/user/send_otp/data/sources/otp_api.dart';
-import 'package:myfirstapp/features/user/send_otp/domain/usecases/send_otp_usecase.dart';
-import 'package:myfirstapp/features/user/send_otp/domain/usecases/verify_otp_usecase.dart';
-import 'package:myfirstapp/features/user/send_otp/presentation/bloc/phone_validation_bloc.dart';
-import 'package:myfirstapp/features/user/send_otp/presentation/bloc/phone_validation_event.dart';
+import 'package:myfirstapp/features/user/phone_validation/data/sources/otp_api.dart';
+import 'package:myfirstapp/features/user/phone_validation/domain/usecases/resend_otp_usecase.dart';
+import 'package:myfirstapp/features/user/phone_validation/domain/usecases/send_otp_usecase.dart';
+import 'package:myfirstapp/features/user/phone_validation/domain/usecases/verify_otp_usecase.dart';
+import 'package:myfirstapp/features/user/phone_validation/presentation/bloc/phone_validation_bloc.dart';
+import 'package:myfirstapp/features/user/phone_validation/presentation/bloc/phone_validation_event.dart';
 
 import '../../features/user/domain/repository/user_repository.dart';
 import '../../features/user/presentation/bloc/user_bloc.dart';
@@ -28,11 +29,17 @@ import '../../features/user/auth/domain/repository/ForgotPassword_repository.dar
 import '../../features/user/auth/data/repository/forgotpassword_repository_impl.dart';
 import '../../features/user/auth/domain/usecases/validate_otp_usercase.dart';
 import '../../features/user/auth/domain/usecases/reset_password_usercase.dart';
-import '../../features/user/send_otp/data/repository/otp_repository_impl.dart';
-import '../../features/user/send_otp/domain/repository/otp_repository.dart';
-import '../../features/user/send_otp/presentation/bloc/phone_validation_event.dart';
+import '../../features/user/phone_validation/data/repository/otp_repository_impl.dart';
+import '../../features/user/phone_validation/domain/repository/otp_repository.dart';
+import '../../features/user/phone_validation/presentation/bloc/phone_validation_event.dart';
 // import '../../features/user/send_otp.dart/data/sources/sendotp_firebase.dart';
-import '../../features/user/send_otp/data/sources/sendotp_firebase.dart';
+import '../../features/user/phone_validation/data/sources/sendotp_firebase.dart';
+import '../../features/user/profile/domain/usecases/profile_usecase.dart';
+import '../../features/user/profile/data/repository/profile_repository_impl.dart';
+import '../../features/user/profile/domain/repository/profile_repository.dart';
+import '../../features/user/profile/presentation/bloc/profile_bloc.dart';
+import '../../features/user/profile/data/sources/profile_auth.dart';
+import '../../features/user/phone_validation/domain/usecases/phone_linking_usecase.dart';
 
 final getIt = GetIt.instance;
 void setupLocator() {
@@ -84,23 +91,35 @@ void setupLocator() {
   // getIt.registerLazySingleton<OtpApi>(() => OtpApi());
   getIt.registerLazySingleton<OtpApi>(() => OtpApi(getIt<Dio>()));
   // getIt.registerLazySingleton<FirebaseOtpService>(() => FirebaseOtpService());
-
+  getIt.registerLazySingleton<ProfileAuth>(() => ProfileAuth(getIt<Dio>()));
   getIt.registerLazySingleton<OtpRepository>(() => OtpRepositoryImpl(
       otpApi: getIt<OtpApi>(),
       firebaseOtpService: getIt<FirebaseOtpService>()));
-
+  getIt.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(profileAuth: getIt<ProfileAuth>()));
   getIt.registerLazySingleton<SendOtpUsecase>(
     () => SendOtpUsecase(getIt<OtpRepository>()),
   );
   getIt.registerLazySingleton<VerifyOtpUsecase>(
     () => VerifyOtpUsecase(getIt<OtpRepository>()),
   );
-
+  getIt.registerLazySingleton<ProfileUsecase>(
+      () => ProfileUsecase(getIt<ProfileRepository>()));
+  getIt.registerLazySingleton<ResendOtpUsecase>(
+      () => ResendOtpUsecase(getIt<OtpRepository>()));
+  getIt.registerLazySingleton<PhoneLinkingUsecase>(
+      () => PhoneLinkingUsecase(getIt<OtpRepository>()));
   getIt.registerFactory(() => OtpBloc(
-      repository: getIt<OtpRepository>(),
-      sendOtp: getIt<SendOtpUsecase>(),
-      firebaseOtpService: FirebaseOtpService(),
-      verifyOtpUsecase: getIt<VerifyOtpUsecase>()));
+        repository: getIt<OtpRepository>(),
+        sendOtp: getIt<SendOtpUsecase>(),
+        firebaseOtpService: FirebaseOtpService(),
+        verifyOtpUsecase: getIt<VerifyOtpUsecase>(),
+        resendOtpUsecase: getIt<ResendOtpUsecase>(),
+        phoneLinkingUsecase: getIt<PhoneLinkingUsecase>(),
+      ));
+  getIt.registerFactory(() => ProfileBloc(
+      profileRepository: getIt<ProfileRepository>(),
+      profileUsecase: getIt<ProfileUsecase>()));
   getIt.registerLazySingleton<FirebaseOtpService>(() => FirebaseOtpService());
 
   // final firebaseOtpService = getIt<FirebaseOtpService>();
